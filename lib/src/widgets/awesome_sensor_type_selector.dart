@@ -1,4 +1,5 @@
 import 'package:camerawesome/camerawesome_plugin.dart';
+import 'package:camerawesome/src/logger.dart';
 import 'package:flutter/material.dart';
 
 class AwesomeSensorTypeSelector extends StatefulWidget {
@@ -20,7 +21,7 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
   @override
   void initState() {
     super.initState();
-
+    debugPrint("AwesomeSensorTypeSelector init");
     widget.state.getSensors().then((sensorDeviceData) {
       setState(() {
         _sensorDeviceData = sensorDeviceData;
@@ -43,6 +44,7 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
 
   Widget _buildContent(AsyncSnapshot<SensorConfig> sensorConfigSnapshot) {
     if (!sensorConfigSnapshot.hasData) {
+      printLog("sensorConfigSnapshot NO DATA");
       return const SizedBox.shrink();
     }
 
@@ -50,6 +52,7 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
         sensorConfigSnapshot.data!.sensors.isNotEmpty &&
         sensorConfigSnapshot.data!.sensors.first.position ==
             SensorPosition.front) {
+              printLog("something in here");
       return const SizedBox.shrink();
     }
 
@@ -58,14 +61,16 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
       stream: sensorConfig.sensorType$,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
+          printLog("SNAPSHOT NO DATA");
           return const SizedBox.shrink();
         }
 
         if (_sensorDeviceData == null ||
             _sensorDeviceData!.availableBackSensors <= 0) {
+              printLog("NO BACK SENSORS");
           return const SizedBox.shrink();
         }
-
+  printLog("sdjhgfkhjdsgdhjsf");
         return Container(
           height: 50,
           decoration: BoxDecoration(
@@ -168,6 +173,10 @@ class _SensorTypeButton extends StatelessWidget {
         return '0.5';
       case SensorType.telephoto:
         return '2';
+      case SensorType.dualCamera:
+        return 'd';
+      case SensorType.tripleCamera:
+        return 't';
       default:
         return '1';
     }

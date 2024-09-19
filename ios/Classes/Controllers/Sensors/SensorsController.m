@@ -13,7 +13,7 @@
 + (NSArray *)getSensors:(AVCaptureDevicePosition)position {
   NSMutableArray *sensors = [NSMutableArray new];
   
-  NSArray *sensorsType = @[AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera, AVCaptureDeviceTypeBuiltInUltraWideCamera, AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+  NSArray *sensorsType = @[AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera, AVCaptureDeviceTypeBuiltInUltraWideCamera, AVCaptureDeviceTypeBuiltInDualCamera, AVCaptureDeviceTypeBuiltInTripleCamera, AVCaptureDeviceTypeBuiltInTrueDepthCamera];
   
   AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
                                                        discoverySessionWithDeviceTypes:sensorsType
@@ -30,6 +30,10 @@
       type = PigeonSensorTypeTrueDepth;
     } else if (device.deviceType == AVCaptureDeviceTypeBuiltInWideAngleCamera) {
       type = PigeonSensorTypeWideAngle;
+    } else if (device.deviceType == AVCaptureDeviceTypeBuiltInDualCamera) {
+      type = PigeonSensorTypeDualCamera;
+    } else if (device.deviceType == AVCaptureDeviceTypeBuiltInTripleCamera) {
+      type = PigeonSensorTypeTripleCamera;
     } else {
       type = PigeonSensorTypeUnknown;
     }

@@ -53,7 +53,7 @@ class CamerawesomePlugin {
   static CameraRunningState currentState = CameraRunningState.stopped;
 
   /// Set it to true to print dart logs from camerawesome
-  static bool printLogs = false;
+  static bool printLogs = true;
 
   static Future<bool?> checkiOSPermissions(
       List<String?> permissionsName) async {
@@ -458,6 +458,18 @@ class CamerawesomePlugin {
         wideAngle: backSensorsData
             .where(
               (element) => element.sensorType == SensorType.wideAngle,
+            )
+            .toList()
+            .firstOrNull,
+        dualCamera: backSensorsData
+            .where(
+              (element) => element.sensorType == SensorType.dualCamera,
+            )
+            .toList()
+            .firstOrNull,
+        tripleCamera: backSensorsData
+            .where(
+              (element) => element.sensorType == SensorType.tripleCamera,
             )
             .toList()
             .firstOrNull,

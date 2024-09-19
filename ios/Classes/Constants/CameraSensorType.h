@@ -13,6 +13,8 @@ typedef enum {
   wideAngle,
   ultraWideAngle,
   telephoto,
+  dualCamera,
+  tripleCamera,
   
   // front
   trueDepth

@@ -71,8 +71,12 @@ typedef NS_ENUM(NSUInteger, PigeonSensorType) {
   /// A device that consists of two cameras, one Infrared and one YUV.
   ///
   /// iOS only
-  PigeonSensorTypeTrueDepth = 3,
-  PigeonSensorTypeUnknown = 4,
+  PigeonSensorTypeDualCamera = 3,
+  PigeonSensorTypeTripleCamera = 4,
+
+  PigeonSensorTypeTrueDepth = 5,
+
+  PigeonSensorTypeUnknown = 6,
 };
 
 typedef NS_ENUM(NSUInteger, CamerAwesomePermission) {

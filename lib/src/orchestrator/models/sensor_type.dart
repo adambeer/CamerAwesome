@@ -10,6 +10,10 @@ enum SensorType {
   /// A built-in camera device with a longer focal length than the wide-angle camera.
   telephoto,
 
+  dualCamera,
+
+  tripleCamera,
+
   /// A device that consists of two cameras, one Infrared and one YUV.
   ///
   /// iOS only
@@ -63,6 +67,9 @@ class SensorDeviceData {
   /// A built-in camera device with a longer focal length than the wide-angle camera.
   SensorTypeDevice? telephoto;
 
+  SensorTypeDevice? dualCamera;
+  SensorTypeDevice? tripleCamera;
+
   /// A device that consists of two cameras, one Infrared and one YUV.
   ///
   /// iOS only
@@ -72,7 +79,9 @@ class SensorDeviceData {
     this.wideAngle,
     this.ultraWideAngle,
     this.telephoto,
-    this.trueDepth,
+    this.dualCamera,
+    this.tripleCamera,
+    this.trueDepth
   });
 
   List<SensorTypeDevice> get availableSensors {
@@ -80,7 +89,9 @@ class SensorDeviceData {
       wideAngle,
       ultraWideAngle,
       telephoto,
-      trueDepth,
+      dualCamera,
+      tripleCamera,
+      trueDepth
     ].where((element) => element != null).cast<SensorTypeDevice>().toList();
   }
 
@@ -88,6 +99,8 @@ class SensorDeviceData {
         wideAngle,
         ultraWideAngle,
         telephoto,
+        dualCamera,
+        tripleCamera
       ].where((element) => element != null).length;
 
   int get availableFrontSensors => [

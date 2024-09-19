@@ -73,6 +73,8 @@ enum PigeonSensorType {
   ///
   /// iOS only
   trueDepth,
+  dualCamera,
+  tripleCamera,
   unknown,
 }
 
