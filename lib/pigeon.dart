@@ -69,12 +69,13 @@ enum PigeonSensorType {
   /// A built-in camera device with a longer focal length than the wide-angle camera.
   telephoto,
 
+  dualCamera,
+  tripleCamera,
+  
   /// A device that consists of two cameras, one Infrared and one YUV.
   ///
   /// iOS only
   trueDepth,
-  dualCamera,
-  tripleCamera,
   unknown,
 }
 

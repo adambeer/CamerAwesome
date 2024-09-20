@@ -18,7 +18,7 @@
     return PigeonSensorTypeTrueDepth;
   } else if (type == AVCaptureDeviceTypeBuiltInWideAngleCamera) {
     return PigeonSensorTypeWideAngle;
-  } else if (type == AVCaptureDeviceTypeBuiltInDualCamera) {
+  } else if (type == AVCaptureDeviceTypeBuiltInDualWideCamera) {
     return PigeonSensorTypeDualCamera;
   } else if (type == AVCaptureDeviceTypeBuiltInTripleCamera) {
     return PigeonSensorTypeTripleCamera;
@@ -37,7 +37,7 @@
   } else if (sensorType == PigeonSensorTypeWideAngle) {
     return AVCaptureDeviceTypeBuiltInWideAngleCamera;
   } else if (sensorType == PigeonSensorTypeDualCamera) {
-    return AVCaptureDeviceTypeBuiltInDualCamera;
+    return AVCaptureDeviceTypeBuiltInDualWideCamera;
   } else if (sensorType == PigeonSensorTypeTripleCamera) {
     return AVCaptureDeviceTypeBuiltInTripleCamera;
   } else {

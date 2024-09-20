@@ -21,7 +21,6 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
   @override
   void initState() {
     super.initState();
-    debugPrint("AwesomeSensorTypeSelector init");
     widget.state.getSensors().then((sensorDeviceData) {
       setState(() {
         _sensorDeviceData = sensorDeviceData;
@@ -44,7 +43,6 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
 
   Widget _buildContent(AsyncSnapshot<SensorConfig> sensorConfigSnapshot) {
     if (!sensorConfigSnapshot.hasData) {
-      printLog("sensorConfigSnapshot NO DATA");
       return const SizedBox.shrink();
     }
 
@@ -52,7 +50,6 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
         sensorConfigSnapshot.data!.sensors.isNotEmpty &&
         sensorConfigSnapshot.data!.sensors.first.position ==
             SensorPosition.front) {
-              printLog("something in here");
       return const SizedBox.shrink();
     }
 
@@ -61,16 +58,13 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
       stream: sensorConfig.sensorType$,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          printLog("SNAPSHOT NO DATA");
           return const SizedBox.shrink();
         }
 
         if (_sensorDeviceData == null ||
             _sensorDeviceData!.availableBackSensors <= 0) {
-              printLog("NO BACK SENSORS");
           return const SizedBox.shrink();
         }
-  printLog("sdjhgfkhjdsgdhjsf");
         return Container(
           height: 50,
           decoration: BoxDecoration(
@@ -112,6 +106,24 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
                     onTap: () {
                       widget.state.setSensorType(0, SensorType.telephoto,
                           _sensorDeviceData!.telephoto!.uid);
+                    },
+                  ),
+                if (_sensorDeviceData?.dualCamera != null)
+                  _SensorTypeButton(
+                    sensorType: SensorType.dualCamera,
+                    isSelected: snapshot.data == SensorType.dualCamera,
+                    onTap: () {
+                      widget.state.setSensorType(0, SensorType.dualCamera,
+                          _sensorDeviceData!.dualCamera!.uid);
+                    },
+                  ),
+                if (_sensorDeviceData?.tripleCamera != null)
+                  _SensorTypeButton(
+                    sensorType: SensorType.tripleCamera,
+                    isSelected: snapshot.data == SensorType.tripleCamera,
+                    onTap: () {
+                      widget.state.setSensorType(0, SensorType.tripleCamera,
+                          _sensorDeviceData!.tripleCamera!.uid);
                     },
                   ),
                 // Text(snapshot.data.toString()),
@@ -174,9 +186,9 @@ class _SensorTypeButton extends StatelessWidget {
       case SensorType.telephoto:
         return '2';
       case SensorType.dualCamera:
-        return 'd';
+        return 'D';
       case SensorType.tripleCamera:
-        return 't';
+        return 'T';
       default:
         return '1';
     }
