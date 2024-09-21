@@ -90,24 +90,6 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
                           _sensorDeviceData!.ultraWideAngle!.uid);
                     },
                   ),
-                if (_sensorDeviceData?.wideAngle != null)
-                  _SensorTypeButton(
-                    sensorType: SensorType.wideAngle,
-                    isSelected: snapshot.data == SensorType.wideAngle,
-                    onTap: () {
-                      widget.state.setSensorType(0, SensorType.wideAngle,
-                          _sensorDeviceData!.wideAngle!.uid);
-                    },
-                  ),
-                if (_sensorDeviceData?.telephoto != null)
-                  _SensorTypeButton(
-                    sensorType: SensorType.telephoto,
-                    isSelected: snapshot.data == SensorType.telephoto,
-                    onTap: () {
-                      widget.state.setSensorType(0, SensorType.telephoto,
-                          _sensorDeviceData!.telephoto!.uid);
-                    },
-                  ),
                 if (_sensorDeviceData?.dualCamera != null)
                   _SensorTypeButton(
                     sensorType: SensorType.dualCamera,
@@ -124,6 +106,15 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
                     onTap: () {
                       widget.state.setSensorType(0, SensorType.tripleCamera,
                           _sensorDeviceData!.tripleCamera!.uid);
+                    },
+                  ),
+                if (_sensorDeviceData?.telephoto != null)
+                  _SensorTypeButton(
+                    sensorType: SensorType.telephoto,
+                    isSelected: snapshot.data == SensorType.telephoto,
+                    onTap: () {
+                      widget.state.setSensorType(0, SensorType.telephoto,
+                          _sensorDeviceData!.telephoto!.uid);
                     },
                   ),
                 // Text(snapshot.data.toString()),
@@ -186,9 +177,9 @@ class _SensorTypeButton extends StatelessWidget {
       case SensorType.telephoto:
         return '2';
       case SensorType.dualCamera:
-        return 'D';
+        return '1';
       case SensorType.tripleCamera:
-        return 'T';
+        return '1';
       default:
         return '1';
     }
