@@ -90,24 +90,7 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
                           _sensorDeviceData!.ultraWideAngle!.uid);
                     },
                   ),
-                if (_sensorDeviceData?.dualCamera != null)
-                  _SensorTypeButton(
-                    sensorType: SensorType.dualCamera,
-                    isSelected: snapshot.data == SensorType.dualCamera,
-                    onTap: () {
-                      widget.state.setSensorType(0, SensorType.dualCamera,
-                          _sensorDeviceData!.dualCamera!.uid);
-                    },
-                  ),
-                if (_sensorDeviceData?.tripleCamera != null)
-                  _SensorTypeButton(
-                    sensorType: SensorType.tripleCamera,
-                    isSelected: snapshot.data == SensorType.tripleCamera,
-                    onTap: () {
-                      widget.state.setSensorType(0, SensorType.tripleCamera,
-                          _sensorDeviceData!.tripleCamera!.uid);
-                    },
-                  ),
+                printDefaultZoom(snapshot),
                 if (_sensorDeviceData?.telephoto != null)
                   _SensorTypeButton(
                     sensorType: SensorType.telephoto,
@@ -124,6 +107,36 @@ class _AwesomeSensorTypeSelectorState extends State<AwesomeSensorTypeSelector> {
         );
       },
     );
+  }
+
+  Widget printDefaultZoom(AsyncSnapshot<SensorType> snapshot) {
+    if (_sensorDeviceData!.availableBackSensors == 3) {
+      return _SensorTypeButton(
+        sensorType: SensorType.dualCamera,
+        isSelected: snapshot.data == SensorType.dualCamera,
+        onTap: () {
+          widget.state.setSensorType(0, SensorType.dualCamera, _sensorDeviceData!.dualCamera!.uid);
+        },
+      );
+    }
+    else if (_sensorDeviceData!.availableBackSensors == 4) {
+      return _SensorTypeButton(
+        sensorType: SensorType.tripleCamera,
+        isSelected: snapshot.data == SensorType.tripleCamera,
+        onTap: () {
+          widget.state.setSensorType(0, SensorType.tripleCamera, _sensorDeviceData!.tripleCamera!.uid);
+        },
+      );
+    }
+    else {
+      return _SensorTypeButton(
+        sensorType: SensorType.wideAngle,
+        isSelected: snapshot.data == SensorType.wideAngle,
+        onTap: () {
+          widget.state.setSensorType(0, SensorType.wideAngle, _sensorDeviceData!.wideAngle!.uid);
+        },
+      );
+    }
   }
 }
 

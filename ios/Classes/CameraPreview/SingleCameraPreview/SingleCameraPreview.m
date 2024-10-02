@@ -391,7 +391,7 @@
   // TODO: add dual & triple camera
   NSArray<AVCaptureDevice *> *devices = [[NSArray alloc] init];
   AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
-                                                       discoverySessionWithDeviceTypes:@[ AVCaptureDeviceTypeBuiltInDualWideCamera, AVCaptureDeviceTypeBuiltInTripleCamera, ]
+                                                       discoverySessionWithDeviceTypes:@[ AVCaptureDeviceTypeBuiltInDualWideCamera, AVCaptureDeviceTypeBuiltInTripleCamera, AVCaptureDeviceTypeBuiltInWideAngleCamera ]
                                                        mediaType:AVMediaTypeVideo
                                                        position:AVCaptureDevicePositionUnspecified];
   devices = discoverySession.devices;
