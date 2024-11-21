@@ -36,6 +36,7 @@ class AwesomeCircleWidget extends StatelessWidget {
         child: child ??
             Icon(
               icon,
+              fill: 1,
               color: buttonTheme.foregroundColor,
               size: buttonTheme.iconSize * scale,
             ),

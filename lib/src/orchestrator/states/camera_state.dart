@@ -17,8 +17,6 @@ typedef OnPreviewMode = Function(PreviewCameraState);
 typedef OnAnalysisOnlyMode = Function(AnalysisCameraState);
 
 abstract class CameraState {
-  // TODO Make private
-  @protected
   CameraContext cameraContext;
 
   CameraState(this.cameraContext);
