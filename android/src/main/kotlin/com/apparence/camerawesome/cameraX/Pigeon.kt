@@ -137,13 +137,16 @@ enum class PigeonSensorType(val raw: Int) {
   ULTRAWIDEANGLE(1),
   /** A built-in camera device with a longer focal length than the wide-angle camera. */
   TELEPHOTO(2),
+
+  DUALCAMERA(3),
+  TRIPLECAMERA(4),
   /**
    * A device that consists of two cameras, one Infrared and one YUV.
    *
    * iOS only
    */
-  TRUEDEPTH(3),
-  UNKNOWN(4);
+  TRUEDEPTH(5),
+  UNKNOWN(6);
 
   companion object {
     fun ofRaw(raw: Int): PigeonSensorType? {
