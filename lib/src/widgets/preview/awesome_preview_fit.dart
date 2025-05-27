@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 final previewWidgetKey = GlobalKey();
 
-typedef OnPreviewCalculated = void Function(Preview preview);
+typedef OnPreviewCalculated = void Function(AnalysisPreview preview);
 
 class AnimatedPreviewFit extends StatefulWidget {
   final Alignment alignment;
@@ -59,9 +59,7 @@ class _AnimatedPreviewFitState extends State<AnimatedPreviewFit> {
   @override
   void didUpdateWidget(covariant AnimatedPreviewFit oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.previewFit != oldWidget.previewFit ||
-        widget.previewSize != oldWidget.previewSize ||
-        widget.constraints != oldWidget.constraints) {
+    if (widget.previewFit != oldWidget.previewFit || widget.previewSize != oldWidget.previewSize || widget.constraints != oldWidget.constraints) {
       var oldsizeCalculator = PreviewSizeCalculator(
         previewFit: oldWidget.previewFit,
         previewSize: oldWidget.previewSize,
@@ -85,7 +83,7 @@ class _AnimatedPreviewFitState extends State<AnimatedPreviewFit> {
   void _handPreviewCalculated() {
     if (widget.onPreviewCalculated != null) {
       widget.onPreviewCalculated!(
-        Preview(
+        AnalysisPreview(
           nativePreviewSize: widget.previewSize.toSize(),
           previewSize: sizeCalculator!.maxSize,
           offset: sizeCalculator!.offset,
@@ -150,8 +148,7 @@ class PreviewFitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final transformController = TransformationController()
-      ..value = (Matrix4.identity()..scale(scale));
+    final transformController = TransformationController()..value = (Matrix4.identity()..scale(scale));
     return Align(
       alignment: alignment,
       child: SizedBox(
@@ -243,8 +240,7 @@ class PreviewSizeCalculator {
       case CameraPreviewFit.cover:
         maxSize = Size(constraints.maxWidth, constraints.maxHeight);
 
-        if (constraints.maxWidth / constraints.maxHeight >
-            previewSize.width / previewSize.height) {
+        if (constraints.maxWidth / constraints.maxHeight > previewSize.width / previewSize.height) {
           _offset = Offset((hDiff * zoom) * 2, 0);
           // _offset = Offset(0, constraints.maxHeight - maxSize.height);
         } else {
@@ -253,8 +249,7 @@ class PreviewSizeCalculator {
         }
         break;
       case CameraPreviewFit.contain:
-        maxSize = Size(
-            nativePreviewSize.width * zoom, nativePreviewSize.height * zoom);
+        maxSize = Size(nativePreviewSize.width * zoom, nativePreviewSize.height * zoom);
         _offset = Offset(
           constraints.maxWidth - maxSize.width,
           constraints.maxHeight - maxSize.height,
@@ -284,8 +279,7 @@ class PreviewSizeCalculator {
         ratio = constraints.maxHeight / nativePreviewSize.height; // 1220 / 1280
         break;
       case CameraPreviewFit.cover:
-        if (constraints.maxWidth / constraints.maxHeight >
-            nativePreviewSize.width / nativePreviewSize.height) {
+        if (constraints.maxWidth / constraints.maxHeight > nativePreviewSize.width / nativePreviewSize.height) {
           ratio = constraints.maxWidth / nativePreviewSize.width;
         } else {
           ratio = constraints.maxHeight / nativePreviewSize.height;
@@ -302,13 +296,7 @@ class PreviewSizeCalculator {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PreviewSizeCalculator &&
-          runtimeType == other.runtimeType &&
-          previewFit == other.previewFit &&
-          constraints == other.constraints &&
-          previewSize == other.previewSize;
+  bool operator ==(Object other) => identical(this, other) || other is PreviewSizeCalculator && runtimeType == other.runtimeType && previewFit == other.previewFit && constraints == other.constraints && previewSize == other.previewSize;
 
   @override
   int get hashCode => previewSize.hashCode ^ previewSize.hashCode;

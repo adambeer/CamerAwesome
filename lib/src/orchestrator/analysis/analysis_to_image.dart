@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:flutter/material.dart';
 
-class Preview {
+class AnalysisPreview {
   final Size nativePreviewSize;
   final Size previewSize;
   final Offset offset;
   final double scale;
   final Sensor? sensor;
 
-  Preview({
+  AnalysisPreview({
     required this.nativePreviewSize,
     required this.previewSize,
     required this.offset,
@@ -18,7 +18,7 @@ class Preview {
     required this.sensor,
   });
 
-  factory Preview.hidden() => Preview(
+  factory AnalysisPreview.hidden() => AnalysisPreview(
         nativePreviewSize: Size.zero,
         previewSize: Size.zero,
         offset: Offset.zero,
@@ -27,8 +27,7 @@ class Preview {
       );
 
   Offset convertPoint(Offset point) {
-    return Offset(point.dx * scale, point.dy * scale)
-        .translate(offset.dx, offset.dy);
+    return Offset(point.dx * scale, point.dy * scale).translate(offset.dx, offset.dy);
   }
 
   /// this method is used to convert a point from an image to the preview
@@ -51,10 +50,8 @@ class Preview {
       imageDiffY = img.size.width - img.croppedSize.height;
     }
     var offset = (Offset(
-              (shouldflipXY ? point.dy : point.dx).toDouble() -
-                  (imageDiffX / 2),
-              (shouldflipXY ? point.dx : point.dy).toDouble() -
-                  (imageDiffY / 2),
+              (shouldflipXY ? point.dy : point.dx).toDouble() - (imageDiffX / 2),
+              (shouldflipXY ? point.dx : point.dy).toDouble() - (imageDiffY / 2),
             ) *
             scale)
         .translate(

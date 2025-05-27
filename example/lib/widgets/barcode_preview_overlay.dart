@@ -7,7 +7,7 @@ class BarcodePreviewOverlay extends StatefulWidget {
   final List<Barcode> barcodes;
   final AnalysisImage? analysisImage;
   final bool isBackCamera;
-  final Preview preview;
+  final AnalysisPreview preview;
 
   const BarcodePreviewOverlay({
     super.key,
@@ -48,9 +48,7 @@ class _BarcodePreviewOverlayState extends State<BarcodePreviewOverlay> {
 
   @override
   void didUpdateWidget(covariant BarcodePreviewOverlay oldWidget) {
-    if (widget.barcodes != oldWidget.barcodes ||
-        widget.analysisImage != oldWidget.analysisImage &&
-            widget.analysisImage != null) {
+    if (widget.barcodes != oldWidget.barcodes || widget.analysisImage != oldWidget.analysisImage && widget.analysisImage != null) {
       _refreshScanArea();
       _detectBarcodeInArea(widget.analysisImage!, widget.barcodes);
     }
@@ -91,8 +89,7 @@ class _BarcodePreviewOverlayState extends State<BarcodePreviewOverlay> {
 
         // Place text indications around the scan area
         Positioned(
-          top:
-              widget.preview.previewSize.height / 2 + _scanArea.size.height / 2,
+          top: widget.preview.previewSize.height / 2 + _scanArea.size.height / 2,
           left: 0,
           right: 0,
           child: Column(children: [
@@ -267,8 +264,7 @@ class BarcodeFocusAreaPainter extends CustomPainter {
   }
 
   Path getClippedRect(Size size) {
-    final fullRect = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final fullRect = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     final innerRect = getInnerRect(size);
     // Substract innerRect from fullRect
     return Path.combine(
@@ -280,9 +276,7 @@ class BarcodeFocusAreaPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant BarcodeFocusAreaPainter oldDelegate) {
-    return scanArea != oldDelegate.scanArea &&
-        canvasTransformation != oldDelegate.canvasTransformation &&
-        barcodeRect != oldDelegate.barcodeRect;
+    return scanArea != oldDelegate.scanArea && canvasTransformation != oldDelegate.canvasTransformation && barcodeRect != oldDelegate.barcodeRect;
   }
 }
 

@@ -40,7 +40,7 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   final _faceDetectionController = BehaviorSubject<FaceDetectionModel>();
-  Preview? _preview;
+  AnalysisPreview? _preview;
 
   final options = FaceDetectorOptions(
     enableContours: true,
@@ -111,7 +111,7 @@ class _CameraPageState extends State<CameraPage> {
 class _MyPreviewDecoratorWidget extends StatelessWidget {
   final CameraState cameraState;
   final Stream<FaceDetectionModel> faceDetectionStream;
-  final Preview preview;
+  final AnalysisPreview preview;
 
   const _MyPreviewDecoratorWidget({
     required this.cameraState,
@@ -134,8 +134,7 @@ class _MyPreviewDecoratorWidget extends StatelessWidget {
                 if (!faceModelSnapshot.hasData) return const SizedBox();
                 // this is the transformation needed to convert the image to the preview
                 // Android mirrors the preview but the analysis image is not
-                final canvasTransformation = faceModelSnapshot.data!.img
-                    ?.getCanvasTransformation(preview);
+                final canvasTransformation = faceModelSnapshot.data!.img?.getCanvasTransformation(preview);
                 return CustomPaint(
                   painter: FaceDetectorPainter(
                     model: faceModelSnapshot.requireData,
@@ -155,7 +154,7 @@ class _MyPreviewDecoratorWidget extends StatelessWidget {
 class FaceDetectorPainter extends CustomPainter {
   final FaceDetectionModel model;
   final CanvasTransformation? canvasTransformation;
-  final Preview? preview;
+  final AnalysisPreview? preview;
 
   FaceDetectorPainter({
     required this.model,
@@ -175,9 +174,7 @@ class FaceDetectorPainter extends CustomPainter {
       canvas.applyTransformation(canvasTransformation!, size);
     }
     for (final Face face in model.faces) {
-      Map<FaceContourType, Path> paths = {
-        for (var fct in FaceContourType.values) fct: Path()
-      };
+      Map<FaceContourType, Path> paths = {for (var fct in FaceContourType.values) fct: Path()};
       face.contours.forEach((contourType, faceContour) {
         if (faceContour != null) {
           paths[contourType]!.addPolygon(
@@ -265,19 +262,8 @@ class FaceDetectionModel {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FaceDetectionModel &&
-          runtimeType == other.runtimeType &&
-          faces == other.faces &&
-          absoluteImageSize == other.absoluteImageSize &&
-          rotation == other.rotation &&
-          imageRotation == other.imageRotation &&
-          croppedSize == other.croppedSize;
+      other is FaceDetectionModel && runtimeType == other.runtimeType && faces == other.faces && absoluteImageSize == other.absoluteImageSize && rotation == other.rotation && imageRotation == other.imageRotation && croppedSize == other.croppedSize;
 
   @override
-  int get hashCode =>
-      faces.hashCode ^
-      absoluteImageSize.hashCode ^
-      rotation.hashCode ^
-      imageRotation.hashCode ^
-      croppedSize.hashCode;
+  int get hashCode => faces.hashCode ^ absoluteImageSize.hashCode ^ rotation.hashCode ^ imageRotation.hashCode ^ croppedSize.hashCode;
 }
