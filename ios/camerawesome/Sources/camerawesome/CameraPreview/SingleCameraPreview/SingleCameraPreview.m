@@ -72,7 +72,13 @@
   }
   
   [self setBestPreviewQuality];
-  
+
+  [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+      selector:@selector(deviceOrientationDidChange)
+      name:UIDeviceOrientationDidChangeNotification
+      object:nil];
+
   return self;
 }
 
@@ -162,13 +168,37 @@
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
   [_captureSession addOutput:_capturePhotoOutput];
   
-  // Mirror the preview only on portrait mode
   [_captureConnection setAutomaticallyAdjustsVideoMirroring:NO];
   [_captureConnection setVideoMirrored:(_cameraSensorPosition == PigeonSensorPositionFront)];
-  [_captureConnection setVideoOrientation:AVCaptureVideoOrientationPortrait];
+  if ([_captureConnection isVideoOrientationSupported]) {
+    [_captureConnection setVideoOrientation:[self videoOrientationFromDeviceOrientation]];
+  }
+}
+
+- (AVCaptureVideoOrientation)videoOrientationFromDeviceOrientation {
+  switch ([UIDevice currentDevice].orientation) {
+    case UIDeviceOrientationLandscapeLeft:
+      return AVCaptureVideoOrientationLandscapeRight;
+    case UIDeviceOrientationLandscapeRight:
+      return AVCaptureVideoOrientationLandscapeLeft;
+    case UIDeviceOrientationPortraitUpsideDown:
+      return AVCaptureVideoOrientationPortraitUpsideDown;
+    default:
+      return AVCaptureVideoOrientationPortrait;
+  }
+}
+
+- (void)deviceOrientationDidChange {
+  if (_captureConnection && [_captureConnection isVideoOrientationSupported]) {
+    [_captureConnection setVideoOrientation:[self videoOrientationFromDeviceOrientation]];
+  }
 }
 
 - (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+      name:UIDeviceOrientationDidChangeNotification
+      object:nil];
+  [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
   [self.motionController startMotionDetection];
 }
 
