@@ -310,10 +310,11 @@
   
   // Init the camera preview with the selected sensor
   [self initCameraPreview:sensor.position];
-  
-  [self setBestPreviewQuality];
-  
+
   [_captureSession commitConfiguration];
+
+  // Must be called after commitConfiguration — stopRunning inside a configuration block is invalid
+  [self setBestPreviewQuality];
 }
 
 /// Set zoom level
