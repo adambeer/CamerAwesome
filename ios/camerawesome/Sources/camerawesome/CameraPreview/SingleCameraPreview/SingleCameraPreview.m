@@ -189,6 +189,12 @@
 }
 
 - (void)deviceOrientationDidChange {
+  UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+  if (orientation == UIDeviceOrientationFaceUp ||
+      orientation == UIDeviceOrientationFaceDown ||
+      orientation == UIDeviceOrientationUnknown) {
+    return;
+  }
   if (_captureConnection && [_captureConnection isVideoOrientationSupported]) {
     [_captureConnection setVideoOrientation:[self videoOrientationFromDeviceOrientation]];
   }
