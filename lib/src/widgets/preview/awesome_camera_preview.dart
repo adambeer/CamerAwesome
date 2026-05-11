@@ -49,8 +49,9 @@ class AwesomeCameraPreview extends StatefulWidget {
   }
 }
 
-class AwesomeCameraPreviewState extends State<AwesomeCameraPreview> {
+class AwesomeCameraPreviewState extends State<AwesomeCameraPreview> with WidgetsBindingObserver {
   PreviewSize? _previewSize;
+  Orientation? _orientation;
 
   final List<Texture> _textures = [];
 
@@ -68,6 +69,7 @@ class AwesomeCameraPreviewState extends State<AwesomeCameraPreview> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Future.wait([
       widget.state.previewSize(0),
       _loadTextures(),
@@ -134,7 +136,25 @@ class AwesomeCameraPreviewState extends State<AwesomeCameraPreview> {
   }
 
   @override
+  void didChangeMetrics() {
+    final view = WidgetsBinding.instance.platformDispatcher.views.first;
+    final size = view.physicalSize / view.devicePixelRatio;
+    final orientation = size.width > size.height ? Orientation.landscape : Orientation.portrait;
+    if (orientation != _orientation) {
+      _orientation = orientation;
+      widget.state.previewSize(0).then((previewSize) {
+        if (mounted && previewSize != null) {
+          setState(() {
+            _previewSize = previewSize;
+          });
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sensorConfigSubscription?.cancel();
     _aspectRatioSubscription?.cancel();
     super.dispose();
