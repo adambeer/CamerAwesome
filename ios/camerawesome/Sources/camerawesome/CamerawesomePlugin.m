@@ -599,7 +599,12 @@ FlutterEventSink physicalButtonEventSink;
     previewSize = [self.camera getEffectivPreviewSize];
   }
   
-  // height & width are inverted, this is intentionnal, because camera is always on portrait mode
+  UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+  BOOL isLandscape = deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight;
+  if (isLandscape) {
+    return [PreviewSize makeWithWidth:@(previewSize.width) height:@(previewSize.height)];
+  }
+  // height & width are inverted in portrait because iOS sensor is natively landscape
   return [PreviewSize makeWithWidth:@(previewSize.height) height:@(previewSize.width)];
 }
 
