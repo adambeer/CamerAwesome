@@ -176,12 +176,25 @@
 }
 
 - (AVCaptureVideoOrientation)videoOrientationFromDeviceOrientation {
-  switch ([UIDevice currentDevice].orientation) {
-    case UIDeviceOrientationLandscapeLeft:
-      return AVCaptureVideoOrientationLandscapeRight;
-    case UIDeviceOrientationLandscapeRight:
+  UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
+  if (@available(iOS 13.0, *)) {
+    UIWindowScene *scene = (UIWindowScene *)[[UIApplication sharedApplication].connectedScenes anyObject];
+    if (scene) {
+      interfaceOrientation = scene.interfaceOrientation;
+    }
+  } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+#pragma clang diagnostic pop
+  }
+
+  switch (interfaceOrientation) {
+    case UIInterfaceOrientationLandscapeLeft:
       return AVCaptureVideoOrientationLandscapeLeft;
-    case UIDeviceOrientationPortraitUpsideDown:
+    case UIInterfaceOrientationLandscapeRight:
+      return AVCaptureVideoOrientationLandscapeRight;
+    case UIInterfaceOrientationPortraitUpsideDown:
       return AVCaptureVideoOrientationPortraitUpsideDown;
     default:
       return AVCaptureVideoOrientationPortrait;
@@ -189,12 +202,6 @@
 }
 
 - (void)deviceOrientationDidChange {
-  UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
-  if (orientation == UIDeviceOrientationFaceUp ||
-      orientation == UIDeviceOrientationFaceDown ||
-      orientation == UIDeviceOrientationUnknown) {
-    return;
-  }
   if (_captureConnection && [_captureConnection isVideoOrientationSupported]) {
     [_captureConnection setVideoOrientation:[self videoOrientationFromDeviceOrientation]];
   }
