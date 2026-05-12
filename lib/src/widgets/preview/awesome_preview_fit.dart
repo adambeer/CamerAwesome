@@ -72,6 +72,7 @@ class _AnimatedPreviewFitState extends State<AnimatedPreviewFit> {
       );
       oldsizeCalculator.compute();
       sizeCalculator!.compute();
+      maxSize = sizeCalculator!.maxSize;
       animation = Tween<Size>(
         begin: oldsizeCalculator.maxSize,
         end: sizeCalculator!.maxSize,
