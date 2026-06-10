@@ -106,23 +106,36 @@ previewPhotoSampleBuffer:(CMSampleBufferRef)previewPhotoSampleBuffer
   UIImage *image = [UIImage imageWithCGImage:[UIImage imageWithData:data].CGImage
                                        scale:1.0
                                  orientation:[self getJpegOrientation]];
-  float originalWidth = image.size.width;
-  float originalHeight = image.size.height;
-  
-  float originalImageAspectRatio = originalWidth / originalHeight;
-  
-  float outputWidth = originalWidth;
-  float outputHeight = originalHeight;
-  if (originalImageAspectRatio != _aspectRatio) {
-    if (originalImageAspectRatio > _aspectRatio) {
-      outputWidth = originalHeight * _aspectRatio;
-    } else if (originalImageAspectRatio < _aspectRatio) {
-      outputHeight = originalWidth / _aspectRatio;
+
+  // Use CGImage native dimensions (landscape sensor coords) for the aspect ratio check.
+  // image.size is the portrait-logical size after UIImageOrientationRight is applied, so
+  // image.size.width/height are swapped relative to the actual pixel data — using them
+  // for the aspect-ratio comparison caused a square crop (3024×3024) instead of the
+  // correct full-frame crop (4032×3024 → portrait 3024×4032 after rotation).
+  CGImageRef cgImageRef = [image CGImage];
+  float cgWidth  = (float)CGImageGetWidth(cgImageRef);
+  float cgHeight = (float)CGImageGetHeight(cgImageRef);
+  float cgAspect = cgWidth / cgHeight;
+
+  UIImage *imageConverted = image;
+
+  if (fabsf(cgAspect - _aspectRatio) > 0.001f) {
+    float targetW = cgWidth, targetH = cgHeight;
+    if (cgAspect > _aspectRatio) {
+      targetW = cgHeight * _aspectRatio;
+    } else {
+      targetH = cgWidth / _aspectRatio;
     }
+    float cropX = (cgWidth  - targetW) / 2.0f;
+    float cropY = (cgHeight - targetH) / 2.0f;
+    CGRect cropRect = CGRectMake(cropX, cropY, targetW, targetH);
+    CGImageRef cropped = CGImageCreateWithImageInRect(cgImageRef, cropRect);
+    imageConverted = [UIImage imageWithCGImage:cropped
+                                         scale:0.0
+                                   orientation:[self getJpegOrientation]];
+    CGImageRelease(cropped);
   }
-  
-  UIImage *imageConverted = [self imageByCroppingImage:image toSize:CGSizeMake(outputWidth, outputHeight)];
-  
+
   image = [UIImage imageWithCGImage:[imageConverted CGImage] scale:0.0 orientation:[self getJpegOrientation]];
 
   NSData *imageWithExif = [UIImageJPEGRepresentation(image, 1.0) addExif:container];
@@ -136,54 +149,6 @@ previewPhotoSampleBuffer:(CMSampleBufferRef)previewPhotoSampleBuffer
   
 }
 
-- (UIImage *)imageByCroppingImage:(UIImage *)image toSize:(CGSize)size {
-  double newCropWidth, newCropHeight;
-
-  if(image.size.width < image.size.height) {
-    if (image.size.width < size.width) {
-      newCropWidth = size.width;
-    } else {
-      newCropWidth = image.size.width;
-    }
-    newCropHeight = (newCropWidth * size.height)/size.width;
-  } else {
-    if (image.size.height < size.height) {
-      newCropHeight = size.height;
-    } else {
-      newCropHeight = image.size.height;
-    }
-    newCropWidth = (newCropHeight * size.width)/size.height;
-  }
-  
-  double imageHeightDivided = image.size.height/2.0;
-  double imageWidthDivided = image.size.width/2.0;
-  
-  double x = imageWidthDivided - newCropWidth/2.0;
-  double y = imageHeightDivided - newCropHeight/2.0;
-  
-  CGRect cropRect;
-  if (UIDeviceOrientationIsLandscape(_orientation)) {
-    cropRect = CGRectMake(x, y, newCropWidth, newCropHeight);
-  } else {
-    if (_aspectRatioType == Ratio16_9) {
-      cropRect = CGRectMake(0, 0, image.size.height, image.size.width);
-    } else {
-      if (_aspectRatioType == Ratio4_3) {
-        double localX = imageHeightDivided - (imageHeightDivided / _aspectRatio);
-        cropRect = CGRectMake(localX, 0, image.size.height / _aspectRatio, image.size.width);
-      } else {
-        cropRect = CGRectMake(y, x, newCropWidth, newCropHeight);
-      }
-    }
-  }
-  
-  CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
-  
-  UIImage *cropped = [UIImage imageWithCGImage:imageRef];
-  CGImageRelease(imageRef);
-  
-  return cropped;
-}
 
 - (UIImageOrientation)getJpegOrientation {
   switch (_orientation) {
