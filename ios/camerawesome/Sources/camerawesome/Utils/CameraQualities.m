@@ -30,8 +30,6 @@
     return CGSizeMake(3840, 2160);
   } else if (preset == AVCaptureSessionPreset1920x1080) {
     return CGSizeMake(1920, 1080);
-  } else if (preset == AVCaptureSessionPreset1280x960) {
-    return CGSizeMake(1280, 960);
   } else if (preset == AVCaptureSessionPreset1280x720) {
     return CGSizeMake(1280, 720);
   } else if (preset == AVCaptureSessionPreset640x480) {
@@ -61,30 +59,16 @@
 }
 
 + (NSString *)selectPresetForSize:(CGSize)size session:(AVCaptureSession *)session {
-  // Determine whether the format is 4:3 (landscape ratio ~1.33) or 16:9 (~1.78).
-  // We compare the larger dimension over the smaller to normalise portrait/landscape.
-  float maxDim = MAX(size.width, size.height);
-  float minDim = MIN(size.width, size.height);
-  BOOL is4by3 = minDim > 0 && fabsf(maxDim / minDim - 4.0f / 3.0f) < 0.05f;
-
-  if (is4by3) {
-    // Use a 4:3 preset so the video preview and photo output share the same FOV.
-    // Falling back to a 16:9 preset (1280x720 / 1920x1080 / 3840x2160) would make the
-    // video preview taller-relative-to-width than the captured 4:3 photo, causing
-    // top/bottom content to appear in the preview but be missing from the capture.
-    if ([session canSetSessionPreset:AVCaptureSessionPreset1280x960]) {
-      return AVCaptureSessionPreset1280x960;
-    }
-    return AVCaptureSessionPreset640x480;
-  }
-
   if (size.width >= 2160 || size.height >= 3840) {
     if (@available(iOS 9.0, *)) {
+      // we don't know the exact size, so we check if it can apply
+      // if not, apply basic 1920x1080
       if ([session canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         return AVCaptureSessionPreset3840x2160;
       } else {
         return AVCaptureSessionPreset1920x1080;
       }
+      return AVCaptureSessionPreset3840x2160;
     } else {
       return AVCaptureSessionPreset1920x1080;
     }
@@ -97,6 +81,7 @@
   } else if (size.width == 288 && size.height == 352) {
     return AVCaptureSessionPreset352x288;
   } else {
+    // Default to HD
     return AVCaptureSessionPreset1280x720;
   }
 }

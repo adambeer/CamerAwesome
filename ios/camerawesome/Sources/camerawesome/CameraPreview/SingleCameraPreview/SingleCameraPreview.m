@@ -110,11 +110,22 @@
 // TODO: move this to a QualityController
 /// Assign the default preview qualities
 - (void)setBestPreviewQuality {
-  NSArray *qualities = [CameraQualities captureFormatsForDevice:_captureDevice];
-  PreviewSize *firstPreviewSize = [qualities count] > 0 ? qualities.lastObject : [PreviewSize makeWithWidth:@3840 height:@2160];
-  
-  CGSize firstSize = CGSizeMake([firstPreviewSize.width floatValue], [firstPreviewSize.height floatValue]);
-  [self setCameraPreset:firstSize];
+  // AVCaptureSessionPresetPhoto (set in initCameraPreview) ensures the video preview
+  // and photo output share the same sensor crop and field of view.  Overriding it with
+  // any 16:9 preset (1280x720, 1920x1080, 3840x2160) makes the preview taller relative
+  // to its width than the 4:3 photo output, so top/bottom content visible in the
+  // preview is missing from the captured image.  Keep the photo preset and just read
+  // the active format dimensions so Flutter receives the correct preview size.
+  _currentPreset = _captureSession.sessionPreset;
+
+  if (_captureDevice.activeFormat != nil) {
+    CMVideoDimensions dims = CMVideoFormatDescriptionGetDimensions(_captureDevice.activeFormat.formatDescription);
+    _currentPreviewSize = CGSizeMake(dims.width, dims.height);
+  } else {
+    _currentPreviewSize = CGSizeMake(1280, 960);
+  }
+
+  [_videoController setPreviewSize:_currentPreviewSize];
 }
 
 /// Save exif preferences when taking picture
