@@ -149,7 +149,22 @@ class PreviewFitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final transformController = TransformationController()..value = (Matrix4.identity()..scale(scale));
+    // Center the camera frame within the viewport by translating before scaling.
+    // Without this, the scaled content is anchored at the top-left corner so only
+    // the top-left region of the sensor is ever visible — cover mode clips right/bottom
+    // only. With the translation, overflow is distributed equally on all sides so the
+    // user sees the center of the scene, matching native camera behaviour.
+    //
+    // Matrix order: scale(s)..translate(tx,ty) applies translate-then-scale to each
+    // point, i.e. p_screen = s * (p_scene + (tx, ty)).  Setting tx and ty to half the
+    // scene-space overflow shifts the content so screen-space overflow is equal on both
+    // sides of each axis.
+    final double tx = scale > 0 ? -(previewSize.width  - maxSize.width  / scale) / 2 : 0;
+    final double ty = scale > 0 ? -(previewSize.height - maxSize.height / scale) / 2 : 0;
+    final transformController = TransformationController()
+      ..value = (Matrix4.identity()
+        ..scale(scale)
+        ..translate(tx, ty));
     return Align(
       alignment: alignment,
       child: SizedBox(

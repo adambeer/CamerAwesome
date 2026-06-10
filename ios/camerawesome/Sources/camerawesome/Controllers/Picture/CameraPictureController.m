@@ -106,22 +106,35 @@ previewPhotoSampleBuffer:(CMSampleBufferRef)previewPhotoSampleBuffer
   UIImage *image = [UIImage imageWithCGImage:[UIImage imageWithData:data].CGImage
                                        scale:1.0
                                  orientation:[self getJpegOrientation]];
-  float originalWidth = image.size.width;
-  float originalHeight = image.size.height;
 
-  float originalImageAspectRatio = originalWidth / originalHeight;
+  // Use the raw CGImage pixel dimensions (always in landscape sensor orientation) for
+  // the aspect ratio check.  image.size reflects the display/logical dimensions after
+  // UIImageOrientationRight is applied — width and height are swapped — so comparing
+  // image.size.width/height against _aspectRatio (a landscape value e.g. 4/3 = 1.333)
+  // always mismatches for portrait images and incorrectly triggers a crop that produces
+  // a square.  max/min of the CGImage dimensions gives a normalised ratio ≥ 1 that
+  // matches _aspectRatio regardless of whether the buffer arrived portrait or landscape.
+  CGImageRef cgRef = [image CGImage];
+  float cgMax = (float)MAX(CGImageGetWidth(cgRef), CGImageGetHeight(cgRef));
+  float cgMin = (float)MIN(CGImageGetWidth(cgRef), CGImageGetHeight(cgRef));
+  float normalisedAspect = cgMin > 0 ? cgMax / cgMin : _aspectRatio;
 
-  float outputWidth = originalWidth;
-  float outputHeight = originalHeight;
-  if (originalImageAspectRatio != _aspectRatio) {
-    if (originalImageAspectRatio > _aspectRatio) {
+  UIImage *imageConverted;
+  if (fabsf(normalisedAspect - _aspectRatio) <= 0.001f) {
+    // Sensor is already the correct aspect ratio — no crop needed.
+    imageConverted = image;
+  } else {
+    float originalWidth  = image.size.width;
+    float originalHeight = image.size.height;
+    float outputWidth  = originalWidth;
+    float outputHeight = originalHeight;
+    if (originalWidth / originalHeight > _aspectRatio) {
       outputWidth = originalHeight * _aspectRatio;
-    } else if (originalImageAspectRatio < _aspectRatio) {
+    } else {
       outputHeight = originalWidth / _aspectRatio;
     }
+    imageConverted = [self imageByCroppingImage:image toSize:CGSizeMake(outputWidth, outputHeight)];
   }
-
-  UIImage *imageConverted = [self imageByCroppingImage:image toSize:CGSizeMake(outputWidth, outputHeight)];
 
   image = [UIImage imageWithCGImage:[imageConverted CGImage] scale:0.0 orientation:[self getJpegOrientation]];
 
