@@ -413,23 +413,14 @@ data class CameraXState(
     }
 
     override fun onOrientationChanged(orientation: Int) {
-        imageAnalysis?.targetRotation = when (orientation) {
-            in 225 until 315 -> {
-                Surface.ROTATION_90
-            }
-
-            in 135 until 225 -> {
-                Surface.ROTATION_180
-            }
-
-            in 45 until 135 -> {
-                Surface.ROTATION_270
-            }
-
-            else -> {
-                Surface.ROTATION_0
-            }
+        val rotation = when (orientation) {
+            in 225 until 315 -> Surface.ROTATION_90
+            in 135 until 225 -> Surface.ROTATION_180
+            in 45 until 135 -> Surface.ROTATION_270
+            else -> Surface.ROTATION_0
         }
+        previews?.forEach { it.targetRotation = rotation }
+        imageAnalysis?.targetRotation = rotation
     }
 
     fun updateAspectRatio(newAspectRatio: String) {
